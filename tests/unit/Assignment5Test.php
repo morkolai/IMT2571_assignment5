@@ -46,5 +46,19 @@ class Assignment5Test extends \Codeception\Test\Unit
         $this->assertEquals('Lillehammer', $club->city);
         $this->assertEquals('Oppland', $club->county);  
     }
+
+    /**
+     * Function testing that basic skier information is loaded.
+     */
+   public function testSkiers()
+   {
+       $skiers = $this->model->getSkiers();
+       $this->assertEquals(112, sizeOf($skiers));
+       $skier = $skiers[9];
+       $this->assertEquals('bent_svee', $skier->userName);
+       $this->assertEquals('Bente', $skier->firstName);
+       $this->assertEquals('Sveen', $skier->lastName);
+       $this->assertEquals(2003, $skier->yearOfBirth);  
+   }
         
 }

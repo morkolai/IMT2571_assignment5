@@ -8,7 +8,7 @@
 - [x] Implement Assignment5Test.php/TestOneYearlyDistance()
 - [x] Implement Assignment5Test.php/TestOneYearlyDistance()
 - [x] Implement XMLSkierLogs.php/getClubs()
-- [ ] Implement XMLSkierLogs.php/getSkiers()
+- [x] Implement XMLSkierLogs.php/getSkiers()
 - [ ] Extend XMLSkierLogs.php/getSkiers() to get all affiliations
 - [ ] Extend XMLSkierLogs.php/getSkiers() to compute and retreve yearly distance
 

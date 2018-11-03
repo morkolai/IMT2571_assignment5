@@ -41,13 +41,13 @@ class XmlSkierLogs
     public function getClubs()
     {
         $clubs = array();
-        $children = $this->xpath->query('//SkierLogs/Clubs/Club');
+        $nodes = $this->xpath->query('//SkierLogs/Clubs/Club');
 
-        for($i=0; $i < $children->length; $i++) {
-          $id = $children->item($i)->attributes->item(0)->value;
-          $name = $children->item($i)->childNodes->item(1)->childNodes->item(0)->nodeValue;
-          $city = $children->item($i)->childNodes->item(3)->childNodes->item(0)->nodeValue;
-          $county = $children->item($i)->childNodes->item(5)->childNodes->item(0)->nodeValue;
+        for($i=0; $i < $nodes->length; $i++) {
+          $id = $nodes->item($i)->attributes->item(0)->value;
+          $name = $nodes->item($i)->childNodes->item(1)->childNodes->item(0)->nodeValue;
+          $city = $nodes->item($i)->childNodes->item(3)->childNodes->item(0)->nodeValue;
+          $county = $nodes->item($i)->childNodes->item(5)->childNodes->item(0)->nodeValue;
           $clubs[$i] = new Club($id, $name, $city, $county);
         }
         return $clubs;
@@ -62,6 +62,15 @@ class XmlSkierLogs
     public function getSkiers()
     {
         $skiers = array();
+        $nodes = $this->xpath->query('//SkierLogs/Skiers/Skier');
+
+        for($i=0; $i < $nodes->length; $i++) {
+          $userName = $nodes->item($i)->attributes->item(0)->value;
+          $firstName = $nodes->item($i)->childNodes->item(1)->childNodes->item(0)->nodeValue;
+          $lastName = $nodes->item($i)->childNodes->item(3)->childNodes->item(0)->nodeValue;
+          $yearOfBirth = $nodes->item($i)->childNodes->item(5)->childNodes->item(0)->nodeValue;
+          $skiers[$i] = new Skier($userName, $firstName, $lastName, $yearOfBirth);
+        }
     
         // TODO: Implement the function retrieving skier information,
         //       including affiliation history and logged yearly distances.
@@ -70,6 +79,6 @@ class XmlSkierLogs
 }
 
 $bob = new XMLSkierLogs('../../SkierLogs.xml');
-$bob->getClubs();
+$bob->getSkiers();
 
 ?>
