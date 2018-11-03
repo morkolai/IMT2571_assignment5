@@ -20,6 +20,8 @@ class XmlSkierLogs
       * @var DOMDocument The XML document holding the club and skier information.
       */  
     protected $doc;
+
+    protected $xpath;
     
     /**
       * @param string $url Name of the skier logs XML file.
@@ -28,6 +30,7 @@ class XmlSkierLogs
     {
         $this->doc = new DOMDocument();
         $this->doc->load($url);
+        $this->xpath = new DOMXpath($this->doc);
     }
     
     /**
@@ -38,8 +41,15 @@ class XmlSkierLogs
     public function getClubs()
     {
         $clubs = array();
-        
-        // TODO: Implement the function retrieving club information
+        $children = $this->xpath->query('//SkierLogs/Clubs/Club');
+
+        for($i=0; $i < $children->length; $i++) {
+          $id = $children->item($i)->attributes->item(0)->value;
+          $name = $children->item($i)->childNodes->item(1)->childNodes->item(0)->nodeValue;
+          $city = $children->item($i)->childNodes->item(3)->childNodes->item(0)->nodeValue;
+          $county = $children->item($i)->childNodes->item(5)->childNodes->item(0)->nodeValue;
+          $clubs[$i] = new Club($id, $name, $city, $county);
+        }
         return $clubs;
     }
 
@@ -56,7 +66,10 @@ class XmlSkierLogs
         // TODO: Implement the function retrieving skier information,
         //       including affiliation history and logged yearly distances.
         return $skiers;
-    }
+    }  
 }
+
+$bob = new XMLSkierLogs('../../SkierLogs.xml');
+$bob->getClubs();
 
 ?>
