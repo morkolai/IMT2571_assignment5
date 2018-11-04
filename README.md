@@ -10,7 +10,7 @@
 - [x] Implement XMLSkierLogs.php/getClubs()
 - [x] Implement XMLSkierLogs.php/getSkiers()
 - [x] Extend XMLSkierLogs.php/getSkiers() to get all affiliations
-- [ ] Extend XMLSkierLogs.php/getSkiers() to compute and retreve yearly distance
+- [x] Extend XMLSkierLogs.php/getSkiers() to compute and retreve yearly distance
 
 
 
