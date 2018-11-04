@@ -63,7 +63,7 @@ class XmlSkierLogs
     {
         $skiers = array();
 
-        //Adding new skier
+        //Adding new skier base data
         $nodes = $this->xpath->query('//SkierLogs/Skiers/Skier');
 
         for($i = 0; $i < $nodes->length; $i++) {
@@ -74,58 +74,60 @@ class XmlSkierLogs
           $skiers[$i] = new Skier($userName, $firstName, $lastName, $yearOfBirth);
         }
 
-        //Adding affiliations to skier
+        //ADDING AFFILIATIONS AND YEARLY DISTANCES TO SKIER:
+
         $path = $this->xpath->query('//SkierLogs/Season');
 
+        //Goes trough the Season-nodes
         for($i = 0; $i < $path->length; $i++) {
           $season = (int)$path->item($i)->attributes->item(0)->nodeValue;
-
           $path = $this->xpath->query('//SkierLogs/Season[@fallYear='.$season.']/Skiers');
+
+          //Goes trough the Skiers-nodes, the skiers with no clubs are skipped 
           for($j = 0; $j < $path->length; $j++) {
             if($path->item($j)->attributes->length != 0) {
               $club = $path->item($j)->attributes->item(0)->nodeValue;
-
               $path = $this->xpath->query('//SkierLogs/Season[@fallYear="'.$season.'"]/Skiers[@clubId="'.$club.'"]/Skier');
+
+              //Goes trough the userNames for a spesific season and club
               for($k = 0; $k < $path->length; $k++) {
                 $userName = $path->item($k)->attributes->item(0)->nodeValue;
 
+                //Adds affiliations to the skiers they belongs to by userName
                 for($l = 0; $l < count($skiers); $l++) {
                   if($userName == $skiers[$l]->userName) {
                     $skiers[$l]->affiliations[$i] = new Affiliation($club,$season);
                   }
                 }
               }
-            }
+            } //Resets the paths for the loops
             $path = $this->xpath->query('//SkierLogs/Season[@fallYear='.$season.']/Skiers');
-          }
-
+          } //Sets the path for next op
           $path = $this->xpath->query('//SkierLogs/Season[@fallYear='.$season.']/Skiers/Skier');
 
+          //Goes trough the userNames for a season and finds it's distances
           for($j = 0; $j < $path->length; $j++) {
-            $userName2 = $path->item($j)->attributes->item(0)->nodeValue;
-
-            $path = $this->xpath->query('//SkierLogs/Season[@fallYear='.$season.']/Skiers/Skier[@userName="'.$userName2.'"]/Log/Entry/Distance');
+            $userName = $path->item($j)->attributes->item(0)->nodeValue;
+            $path = $this->xpath->query('//SkierLogs/Season[@fallYear='.$season.']/Skiers/Skier[@userName="'.$userName.'"]/Log/Entry/Distance');
             $distance = 0;
+            
+            //Calculates distance
             for($k = 0; $k < $path->length; $k++) {
               $distance += (int)$path->item($k)->childNodes->item(0)->nodeValue;
             }
+
+            //Adds yearly distances to skiers they belongs to by userName
             for($k = 0; $k < count($skiers); $k++) {
-              if($userName2 == $skiers[$k]->userName) {
+              if($userName == $skiers[$k]->userName) {
                 $skiers[$k]->yearlyDistances[$i] = new YearlyDistance($season, $distance);
               }
-            }
+            } //Resets the paths for the loops
             $path = $this->xpath->query('//SkierLogs/Season[@fallYear='.$season.']/Skiers/Skier');
           }
           $path = $this->xpath->query('//SkierLogs/Season');
         }
-        // TODO: Implement the function retrieving skier information,
-        //       including affiliation history and logged yearly distances.
+
        return $skiers;
     }  
 }
-
-//For testing
-$bob = new XMLSkierLogs('../../SkierLogs.xml');
-
-
 ?>
