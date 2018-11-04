@@ -60,5 +60,31 @@ class Assignment5Test extends \Codeception\Test\Unit
        $this->assertEquals('Sveen', $skier->lastName);
        $this->assertEquals(2003, $skier->yearOfBirth);  
    }
+
+    /**
+     * Function testing skiers with no affiliation history.
+     */
+    public function testNoAffiliations()
+    {
+        $skiers = $this->model->getSkiers();
+        $skier = $skiers[45];
+        $this->assertEquals('henr_dale', $skier->userName);
+        $this->assertEquals(0, sizeOf($skier->affiliations));
+    }
+        
+    /**
+     * Function testing that affiliation history is properly loaded.
+     */
+    public function testTwoAffiliations()
+    {
+        $skiers = $this->model->getSkiers();
+        $skier = $skiers[20];
+        $this->assertEquals('elis_ruud', $skier->userName);
+        $this->assertEquals(2, sizeOf($skier->affiliations));
+        $this->assertEquals(2015, $skier->affiliations[0]->season);
+        $this->assertEquals('asker-ski', $skier->affiliations[0]->clubId);
+        $this->assertEquals(2016, $skier->affiliations[1]->season);
+        $this->assertEquals('skiklubben', $skier->affiliations[1]->clubId);
+    }
         
 }

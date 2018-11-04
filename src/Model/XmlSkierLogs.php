@@ -64,17 +64,42 @@ class XmlSkierLogs
         $skiers = array();
         $nodes = $this->xpath->query('//SkierLogs/Skiers/Skier');
 
-        for($i=0; $i < $nodes->length; $i++) {
+        for($i = 0; $i < $nodes->length; $i++) {
           $userName = $nodes->item($i)->attributes->item(0)->value;
           $firstName = $nodes->item($i)->childNodes->item(1)->childNodes->item(0)->nodeValue;
           $lastName = $nodes->item($i)->childNodes->item(3)->childNodes->item(0)->nodeValue;
           $yearOfBirth = $nodes->item($i)->childNodes->item(5)->childNodes->item(0)->nodeValue;
           $skiers[$i] = new Skier($userName, $firstName, $lastName, $yearOfBirth);
         }
-    
+
+        $path = $this->xpath->query('//SkierLogs/Season');
+
+        for($i = 0; $i < $path->length; $i++) {
+          $season = $path->item($i)->attributes->item(0)->nodeValue;
+
+          $path = $this->xpath->query('//SkierLogs/Season[@fallYear='.$season.']/Skiers');
+          for($j = 0; $j < $path->length; $j++) {
+            if($path->item($j)->attributes->length != 0) {
+              $club = $path->item($j)->attributes->item(0)->nodeValue;
+
+              $path = $this->xpath->query('//SkierLogs/Season[@fallYear="'.$season.'"]/Skiers[@clubId="'.$club.'"]/Skier');
+              for($k = 0; $k < $path->length; $k++) {
+                $userName = $path->item($k)->attributes->item(0)->nodeValue;
+
+                for($l = 0; $l < count($skiers); $l++) {
+                  if($userName == $skiers[$l]->userName) {
+                    $skiers[$l]->affiliations[$i] = new Affiliation($club,$season);
+                  }
+                }
+              }
+            }
+            $path = $this->xpath->query('//SkierLogs/Season[@fallYear='.$season.']/Skiers');
+          }
+          $path = $this->xpath->query('//SkierLogs/Season');
+        }
         // TODO: Implement the function retrieving skier information,
         //       including affiliation history and logged yearly distances.
-        return $skiers;
+       return $skiers;
     }  
 }
 
